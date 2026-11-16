@@ -1,8 +1,11 @@
 import { spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+
+import { downloadVerified } from './runtime-download.mjs';
+
+const DOWNLOAD_TIMEOUT_MS = 120_000;
 
 const manifest = JSON.parse(readFileSync('runtime-manifest.json', 'utf8'));
 const python = process.env.ATVIDEO_PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
@@ -38,14 +41,17 @@ try {
 
 async function verifiedWheel(dependency) {
   const metadataUrl = `https://pypi.org/pypi/${dependency.name}/${dependency.version}/json`;
-  const response = await fetch(metadataUrl);
+  const response = await fetch(metadataUrl, { signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS) });
   if (!response.ok) throw new Error(`download ${metadataUrl}: HTTP ${response.status}`);
   const metadata = await response.json();
   const source = metadata.urls.find((file) => file.packagetype === 'sdist');
   if (!source || source.digests?.sha256 !== dependency.sourceSha256) {
     throw new Error(`PyPI source checksum differs for ${dependency.name}`);
   }
-  await downloadVerified(source.url, dependency.sourceSha256, `${dependency.name} source`);
+  await downloadVerified(source.url, dependency.sourceSha256, {
+    timeoutMs: DOWNLOAD_TIMEOUT_MS,
+    label: `${dependency.name} source`
+  });
   const wheel = metadata.urls.find(
     (file) => file.packagetype === 'bdist_wheel' && file.filename.endsWith('-py3-none-any.whl')
   );
@@ -54,17 +60,9 @@ async function verifiedWheel(dependency) {
   }
   return {
     fileName: wheel.filename,
-    bytes: await downloadVerified(wheel.url, dependency.wheelSha256, `${dependency.name} wheel`)
+    bytes: await downloadVerified(wheel.url, dependency.wheelSha256, {
+      timeoutMs: DOWNLOAD_TIMEOUT_MS,
+      label: `${dependency.name} wheel`
+    })
   };
-}
-
-async function downloadVerified(url, expected, label) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`download ${url}: HTTP ${response.status}`);
-  const bytes = Buffer.from(await response.arrayBuffer());
-  const actual = createHash('sha256').update(bytes).digest('hex');
-  if (actual !== expected) {
-    throw new Error(`${label} checksum mismatch: expected ${expected}, got ${actual}`);
-  }
-  return bytes;
 }

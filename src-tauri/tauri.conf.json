@@ -30,9 +30,17 @@
     "targets": ["app", "dmg", "deb", "nsis"],
     "externalBin": [
       "binaries/atvideo-service",
-        "binaries/youtube-bridge",
-        "binaries/qjs"
+      "binaries/youtube-bridge",
+      "binaries/qjs"
     ],
+    "resources": {
+      "../LICENSE": "licenses/LICENSE",
+      "../THIRD_PARTY_NOTICES.md": "licenses/THIRD_PARTY_NOTICES.md",
+      "../licenses/QuickJS-ng-MIT.txt": "licenses/QuickJS-ng-MIT.txt",
+      "../licenses/yt-dlp-UNLICENSE.txt": "licenses/yt-dlp-UNLICENSE.txt",
+      "../licenses/yt-dlp-ejs-LICENSE.txt": "licenses/yt-dlp-ejs-LICENSE.txt",
+      "../runtime-manifest.json": "runtime-manifest.json"
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
