@@ -1,0 +1,11 @@
+/target/
+/dist/
+/dist-plugin/
+/artifacts/
+/node_modules/
+__pycache__/
+*.py[cod]
+/src-tauri/target/
+/src-tauri/binaries/*
+!/src-tauri/binaries/.gitkeep
+

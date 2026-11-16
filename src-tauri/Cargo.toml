@@ -1,0 +1,20 @@
+[package]
+name = "atvideo"
+version = "0.1.0-alpha.0"
+description = "Standalone and AT Tool video link extractor"
+authors = ["Attson"]
+edition = "2021"
+
+[lib]
+name = "atvideo_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "=2.7.2", features = [] }
+
+[dependencies]
+atvideo-service = { path = ".." }
+serde_json = "1"
+tauri = { version = "=2.12.3", features = [] }
+tauri-plugin-clipboard-manager = "=2.3.2"
+url = "2"
