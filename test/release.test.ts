@@ -47,6 +47,7 @@ describe('Video release contract', () => {
     ]) expect(workflow).toContain(target);
     expect(workflow).toContain('environment: prod');
     expect(workflow).toContain('ATVIDEO_PUBLISHER_PRIVATE_KEY');
+    expect(workflow.match(/Install Linux dependencies/g)).toHaveLength(2);
     expect(workflow).toContain('pnpm install:youtube-deps');
     expect(workflow).toContain('pnpm smoke:runtime');
     expect(workflow).toContain("if: startsWith(github.ref, 'refs/tags/v')");
