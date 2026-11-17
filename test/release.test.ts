@@ -89,4 +89,12 @@ describe('Video release contract', () => {
     expect(dependency).toBe(expected);
     expect(lockfile).toContain(expected);
   });
+
+  it('launches the Tauri CLI without a Windows batch shim', () => {
+    const launcher = readFileSync('scripts/tauri-build.mjs', 'utf8');
+
+    expect(launcher).toContain("require.resolve('@tauri-apps/cli/tauri.js')");
+    expect(launcher).toContain('spawnSync(process.execPath');
+    expect(launcher).not.toContain('pnpm.cmd');
+  });
 });
