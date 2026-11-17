@@ -1,5 +1,4 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import {
   chmodSync,
   copyFileSync,
@@ -14,6 +13,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { releaseCargoEnv } from './release-cargo-env.mjs';
+import { downloadVerified } from './runtime-download.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifest = JSON.parse(readFileSync(resolve(root, 'runtime-manifest.json'), 'utf8'));
@@ -118,14 +118,7 @@ async function stageQuickJs(destination) {
     return;
   }
   const upstream = `https://github.com/quickjs-ng/quickjs/releases/download/v${manifest.quickJs.version}/${asset.name}`;
-  const url = `https://gh-proxy.com/${upstream}`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`download ${url}: HTTP ${response.status}`);
-  const bytes = Buffer.from(await response.arrayBuffer());
-  const actual = createHash('sha256').update(bytes).digest('hex');
-  if (actual !== asset.sha256) {
-    throw new Error(`QuickJS checksum mismatch: expected ${asset.sha256}, got ${actual}`);
-  }
+  const bytes = await downloadVerified(upstream, asset.sha256, { label: 'QuickJS' });
   writeFileSync(destination, bytes);
   if (!extension) chmodSync(destination, 0o755);
 }

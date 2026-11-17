@@ -11,6 +11,7 @@
     "package:plugin": "pnpm build:plugin && node scripts/package-plugin.mjs",
     "package:plugin:test": "pnpm build:plugin && pnpm stage:service --release && node scripts/package-plugin.mjs --test-signing",
     "install:youtube-deps": "node scripts/install-youtube-deps.mjs",
+    "smoke:runtime": "node scripts/smoke-runtime.mjs",
     "stage:service": "node scripts/stage-service.mjs",
     "test": "vitest run",
     "tauri": "tauri",
@@ -18,7 +19,7 @@
     "tauri:build": "node scripts/tauri-build.mjs"
   },
   "dependencies": {
-    "@attson/plugin-sdk": "link:../attool-plugin-sdk",
+    "@attson/plugin-sdk": "https://gh-proxy.com/https://github.com/attsontools/attool-plugin-sdk/archive/7300706aa5b492cd3ef6e8e5a88153cb81ac61e0.tar.gz",
     "@tauri-apps/api": "2.12.3",
     "@tauri-apps/plugin-clipboard-manager": "2.3.2",
     "naive-ui": "2.44.1",
