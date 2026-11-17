@@ -95,6 +95,7 @@ describe('Video release contract', () => {
 
     expect(launcher).toContain("require.resolve('@tauri-apps/cli/tauri.js')");
     expect(launcher).toContain('spawnSync(process.execPath');
+    expect(launcher).toContain("if (tauriArguments[0] === '--') tauriArguments.shift();");
     expect(launcher).not.toContain('pnpm.cmd');
   });
 });
