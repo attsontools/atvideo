@@ -51,6 +51,9 @@ describe('Video release contract', () => {
     expect(workflow).toContain('pnpm install:youtube-deps');
     expect(workflow).toContain('pnpm smoke:runtime');
     expect(workflow).toContain("if: startsWith(github.ref, 'refs/tags/v')");
+    expect(workflow).toMatch(
+      /- name: Verify release version alignment\n\s+if: startsWith\(github\.ref, 'refs\/tags\/v'\)\n\s+shell: bash\n/
+    );
     expect(workflow).toContain('scripts/verify-release.mjs assets');
     expect(workflow).toContain('find "src-tauri/target" -type f -path \'*/release/bundle/*\'');
     expect(workflow).not.toContain('target/${{ matrix.target }}/release/bundle');
