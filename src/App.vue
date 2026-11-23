@@ -39,8 +39,8 @@ function toggleTheme() {
 
 <template>
   <n-config-provider :theme="theme === 'dark' ? darkTheme : null">
-    <div class="video-app">
-      <header class="appbar">
+    <div class="video-app" :class="{ 'video-app--plugin': host.mode === 'plugin' }">
+      <header v-if="host.mode === 'standalone'" class="appbar">
         <strong>AT Video</strong>
         <button
           v-if="host.mode === 'standalone'"
@@ -77,6 +77,10 @@ function toggleTheme() {
   grid-template-rows: 48px minmax(0, 1fr);
   background: var(--bg-base);
   color: var(--text);
+}
+
+.video-app--plugin {
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .appbar {
